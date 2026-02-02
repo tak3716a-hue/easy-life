@@ -1,9 +1,14 @@
 
 const generateBtn = document.getElementById("generate");
 const numbersDiv = document.getElementById("numbers");
+const darkModeToggle = document.getElementById("darkModeToggle");
 
 generateBtn.addEventListener("click", () => {
     generateNumbers();
+});
+
+darkModeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
 });
 
 function generateNumbers() {
@@ -21,4 +26,3 @@ function generateNumbers() {
         numbersDiv.appendChild(numberEl);
     }
 }
-
