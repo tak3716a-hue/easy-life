@@ -22,7 +22,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -63,24 +63,69 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        .content-panel {
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tool-card {
             background: rgba(26, 26, 46, 0.7);
             backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 50px;
+            border-radius: 20px;
+            padding: 30px;
             border: 1px solid rgba(78, 205, 196, 0.2);
-            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s ease;
+            display: block;
         }
 
-        .coming-soon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--life);
+            box-shadow: 0 20px 40px rgba(78, 205, 196, 0.2);
         }
 
-        .message {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.8;
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .tool-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--life);
+            margin-bottom: 10px;
+        }
+
+        .tool-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .tool-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 12px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
+
+        .coming-soon-card {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .coming-soon-card .tool-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
         }
     </style>
 </head>
@@ -90,15 +135,45 @@
 
         <header>
             <h1>금융관련 지식모음</h1>
-            <p class="subtitle">알아두면 좋은 금융 정보</p>
+            <p class="subtitle">알아두면 좋은 금융 정보와 투자 도구</p>
         </header>
 
-        <div class="content-panel">
-            <div class="coming-soon">💰</div>
-            <p class="message">
-                곧 유용한 금융 정보가 업데이트 됩니다!<br>
-                조금만 기다려주세요.
-            </p>
+        <div class="tools-grid">
+            <a href="trading-dashboard.html" class="tool-card">
+                <div class="tool-icon">📈</div>
+                <h3 class="tool-title">CME 해외선물 대시보드</h3>
+                <p class="tool-desc">
+                    나스닥100, 크루드오일, 천연가스, 골드, 러셀2000, 유로FX 실시간 차트와 매매 기록장
+                </p>
+                <span class="tool-badge">실시간 차트</span>
+            </a>
+
+            <div class="tool-card coming-soon-card">
+                <div class="tool-icon">💰</div>
+                <h3 class="tool-title">예적금 금리 비교</h3>
+                <p class="tool-desc">
+                    시중 은행 예금/적금 금리를 한눈에 비교해보세요.
+                </p>
+                <span class="tool-badge">준비중</span>
+            </div>
+
+            <div class="tool-card coming-soon-card">
+                <div class="tool-icon">🏦</div>
+                <h3 class="tool-title">대출 계산기</h3>
+                <p class="tool-desc">
+                    원리금균등, 원금균등 상환 방식별 대출 이자를 계산해보세요.
+                </p>
+                <span class="tool-badge">준비중</span>
+            </div>
+
+            <div class="tool-card coming-soon-card">
+                <div class="tool-icon">📊</div>
+                <h3 class="tool-title">투자 기초 가이드</h3>
+                <p class="tool-desc">
+                    주식, ETF, 채권 등 투자 기초 지식을 알기 쉽게 정리했습니다.
+                </p>
+                <span class="tool-badge">준비중</span>
+            </div>
         </div>
     </div>
 </body>
