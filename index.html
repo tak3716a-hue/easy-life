@@ -708,7 +708,7 @@
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        animateCounter(document.getElementById('counterMembers'), 4, 1500);
+        animateCounter(document.getElementById('counterMembers'), 5, 1500);
         animateCounter(document.getElementById('counterServices'), 12, 2000);
         obs.disconnect();
       }
