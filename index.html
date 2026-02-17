@@ -1,360 +1,760 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Life - 사랑이 넘치는 가족</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #FFD700;
-            --secondary: #1a1a2e;
-            --accent: #16213e;
-            --highlight: #0f3460;
-            --success: #00ff88;
-            --family: #ff6b9d;
-            --life: #4ecdc4;
-            --etc: #a29bfe;
-            --glow: rgba(255, 215, 0, 0.3);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Life — 사랑이 넘치는 가족</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-black: #020810;
+    --navy: #050d1a;
+    --blue-dark: #0a1628;
+    --blue-glow: #0066ff;
+    --blue-bright: #00aaff;
+    --cyan: #00e5ff;
+    --white: #e8f4ff;
+    --grid-color: rgba(0, 102, 255, 0.08);
+    --family-color: #ff6b9d;
+    --life-color: #00e5ff;
+    --etc-color: #a78bfa;
+  }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            color: white;
-            overflow-x: hidden;
-            position: relative;
-        }
+  body {
+    background-color: var(--deep-black);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+  }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
+  .scan-line {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
+    pointer-events: none;
+    z-index: 9999;
+    animation: scanDown 6s linear infinite;
+  }
 
-        header {
-            text-align: center;
-            padding: 60px 20px 40px;
-            animation: fadeInDown 1s ease-out;
-        }
+  @keyframes scanDown {
+    from { top: 0; opacity: 1; }
+    90% { opacity: 1; }
+    to { top: 100vh; opacity: 0; }
+  }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), #fff, var(--primary));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 3s ease infinite;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-        }
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,102,255,0.12) 0%, transparent 70%);
+    top: -150px; left: -150px;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .bg-orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    bottom: 100px; right: -100px;
+    animation: orbFloat 8s ease-in-out infinite -4s;
+  }
 
-        .subtitle {
-            font-size: 1.4rem;
-            color: var(--primary);
-            letter-spacing: 2px;
-            opacity: 0.9;
-            font-weight: 300;
-        }
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
 
-        /* 카테고리 섹션 */
-        .category-section {
-            margin: 50px 0;
-            animation: fadeInUp 1s ease-out backwards;
-        }
+  /* ── 네비게이션 ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    height: 70px;
+    background: linear-gradient(180deg, rgba(2,8,16,0.95) 0%, rgba(2,8,16,0.0) 100%);
+    border-bottom: 1px solid rgba(0,229,255,0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+  }
 
-        .category-section:nth-child(2) { animation-delay: 0.2s; }
-        .category-section:nth-child(3) { animation-delay: 0.4s; }
-        .category-section:nth-child(4) { animation-delay: 0.6s; }
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0,229,255,0.8);
+    text-decoration: none;
+  }
 
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
+  .nav-logo::before {
+    content: '◈';
+    margin-right: 10px;
+    animation: logoPulse 2s ease-in-out infinite;
+  }
 
-        .category-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
+  @keyframes logoPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
 
-        .category-icon.family { background: linear-gradient(135deg, var(--family), #ff8fab); }
-        .category-icon.life { background: linear-gradient(135deg, var(--life), #26d0ce); }
-        .category-icon.etc { background: linear-gradient(135deg, var(--etc), #6c5ce7); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
 
-        .category-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(232,244,255,0.6);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
 
-        .category-title.family { color: var(--family); }
-        .category-title.life { color: var(--life); }
-        .category-title.etc { color: var(--etc); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    transition: width 0.3s;
+  }
 
-        /* 카드 그리드 */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-links a:hover::after { width: 100%; }
 
-        .card {
-            background: rgba(26, 26, 46, 0.7);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
+  /* ── 히어로 섹션 ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 60px 60px;
+    overflow: hidden;
+  }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
+  .hero-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    pointer-events: none;
+  }
 
-        .card:hover::before {
-            left: 100%;
-        }
+  .ring-1 {
+    width: 600px; height: 600px;
+    border-color: rgba(0,102,255,0.12);
+    top: 50%; right: -200px;
+    transform: translateY(-50%);
+    animation: ringRotate 20s linear infinite;
+  }
+  .ring-2 {
+    width: 400px; height: 400px;
+    border-color: rgba(0,229,255,0.1);
+    top: 50%; right: -100px;
+    transform: translateY(-50%);
+    animation: ringRotate 14s linear infinite reverse;
+  }
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
+  .ring-1::before, .ring-2::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: 50%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    transform: translateX(-50%);
+  }
 
-        .card.family:hover { border-color: var(--family); box-shadow: 0 20px 40px rgba(255, 107, 157, 0.2); }
-        .card.life:hover { border-color: var(--life); box-shadow: 0 20px 40px rgba(78, 205, 196, 0.2); }
-        .card.etc:hover { border-color: var(--etc); box-shadow: 0 20px 40px rgba(162, 155, 254, 0.2); }
+  @keyframes ringRotate {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
 
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
+  .hero-content {
+    position: relative;
+    max-width: 700px;
+  }
 
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
 
-        .card.family .card-title { color: var(--family); }
-        .card.life .card-title { color: var(--life); }
-        .card.etc .card-title { color: var(--etc); }
+  .hero-tag::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+  }
 
-        .card-desc {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-        }
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease 0.4s both;
+  }
 
-        .card-arrow {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 1.5rem;
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-        }
+  .hero-title .line-1 {
+    display: block;
+    color: var(--white);
+  }
 
-        .card:hover .card-arrow {
-            opacity: 1;
-            transform: translateX(0);
-        }
+  .hero-title .line-2 {
+    display: block;
+    background: linear-gradient(90deg, var(--blue-glow), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(0,229,255,0.4));
+  }
 
-        .card.family .card-arrow { color: var(--family); }
-        .card.life .card-arrow { color: var(--life); }
-        .card.etc .card-arrow { color: var(--etc); }
+  .hero-desc {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(232,244,255,0.55);
+    margin-bottom: 48px;
+    max-width: 500px;
+    animation: fadeInUp 0.8s ease 0.6s both;
+  }
 
-        /* 푸터 */
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
-            margin-top: 50px;
-        }
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 60px;
+    border-top: 1px solid rgba(0,229,255,0.1);
+    padding-top: 30px;
+    animation: fadeInUp 0.8s ease 0.8s both;
+  }
 
-        /* 애니메이션 */
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
+  .stat-item {
+    flex: 1;
+    padding-right: 30px;
+    border-right: 1px solid rgba(0,229,255,0.1);
+  }
+  .stat-item:last-child { border-right: none; padding-right: 0; padding-left: 30px; }
+  .stat-item:not(:first-child):not(:last-child) { padding: 0 30px; }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: 0 0 15px rgba(0,229,255,0.5);
+  }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(232,244,255,0.4);
+    margin-top: 4px;
+  }
 
-        /* 반응형 */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(232,244,255,0.3);
+    animation: fadeInUp 1s ease 1s both;
+  }
 
-            .subtitle {
-                font-size: 1.1rem;
-            }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(180deg, var(--cyan), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
 
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
 
-            .category-title {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 섹션 공통 ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 60px;
+  }
+
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-tag::before {
+    content: '//';
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(24px, 3.5vw, 42px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .section-line {
+    width: 60px; height: 2px;
+    margin-bottom: 50px;
+  }
+
+  .glow { text-shadow: 0 0 20px currentColor; }
+
+  /* ── 카테고리별 색상 ── */
+  .cat-family .section-tag { color: var(--family-color); }
+  .cat-family .section-tag::before { color: var(--family-color); }
+  .cat-family .section-title .glow { color: var(--family-color); }
+  .cat-family .section-line { background: linear-gradient(90deg, var(--family-color), transparent); }
+
+  .cat-life .section-tag { color: var(--life-color); }
+  .cat-life .section-tag::before { color: var(--life-color); }
+  .cat-life .section-title .glow { color: var(--life-color); }
+  .cat-life .section-line { background: linear-gradient(90deg, var(--life-color), transparent); }
+
+  .cat-etc .section-tag { color: var(--etc-color); }
+  .cat-etc .section-tag::before { color: var(--etc-color); }
+  .cat-etc .section-title .glow { color: var(--etc-color); }
+  .cat-etc .section-line { background: linear-gradient(90deg, var(--etc-color), transparent); }
+
+  /* ── 카드 그리드 ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .card-link {
+    background: var(--deep-black);
+    padding: 44px 32px;
+    text-decoration: none;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    display: block;
+  }
+
+  .card-link::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .card-link:hover { transform: translateY(-4px); }
+  .card-link:hover::before { transform: scaleX(1); }
+  .card-link:hover::after { opacity: 1; }
+
+  /* 카테고리별 카드 색상 */
+  .cat-family .card-link::before { background: linear-gradient(90deg, transparent, var(--family-color), transparent); }
+  .cat-family .card-link::after { background: radial-gradient(circle at 50% 0%, rgba(255,107,157,0.06) 0%, transparent 60%); }
+  .cat-family .card-link:hover { box-shadow: 0 8px 30px rgba(255,107,157,0.1); }
+  .cat-family .card-icon-box { background: rgba(255,107,157,0.1); border-color: rgba(255,107,157,0.3); }
+  .cat-family .card-title { color: var(--family-color); }
+  .cat-family .card-arrow { color: var(--family-color); }
+
+  .cat-life .card-link::before { background: linear-gradient(90deg, transparent, var(--life-color), transparent); }
+  .cat-life .card-link::after { background: radial-gradient(circle at 50% 0%, rgba(0,229,255,0.06) 0%, transparent 60%); }
+  .cat-life .card-link:hover { box-shadow: 0 8px 30px rgba(0,229,255,0.1); }
+  .cat-life .card-icon-box { background: rgba(0,229,255,0.1); border-color: rgba(0,229,255,0.3); }
+  .cat-life .card-title { color: var(--life-color); }
+  .cat-life .card-arrow { color: var(--life-color); }
+
+  .cat-etc .card-link::before { background: linear-gradient(90deg, transparent, var(--etc-color), transparent); }
+  .cat-etc .card-link::after { background: radial-gradient(circle at 50% 0%, rgba(167,139,250,0.06) 0%, transparent 60%); }
+  .cat-etc .card-link:hover { box-shadow: 0 8px 30px rgba(167,139,250,0.1); }
+  .cat-etc .card-icon-box { background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.3); }
+  .cat-etc .card-title { color: var(--etc-color); }
+  .cat-etc .card-arrow { color: var(--etc-color); }
+
+  .card-num {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 1px;
+  }
+
+  .card-icon-box {
+    width: 56px; height: 56px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(232,244,255,0.45);
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 20px; right: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: all 0.3s;
+  }
+
+  .card-link:hover .card-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  /* ── 구분선 ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+    margin: 0 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── 푸터 ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0,229,255,0.08);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 900;
+    color: rgba(0,229,255,0.4);
+    letter-spacing: 4px;
+  }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(232,244,255,0.2);
+  }
+
+  /* ── 스크롤바 ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--deep-black); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 2px; }
+
+  /* ── 반응형 ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 70px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .hero-stats { flex-direction: column; gap: 16px; }
+    .stat-item { border-right: none !important; border-bottom: 1px solid rgba(0,229,255,0.1); padding: 0 0 16px !important; }
+    .stat-item:last-child { border-bottom: none; }
+    .ring-1, .ring-2 { display: none; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .divider { margin: 0 24px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Easy Life</h1>
-            <div class="subtitle">사랑이 넘치는 가족</div>
-        </header>
 
-        <!-- 우리가족 모여라 -->
-        <section class="category-section">
-            <div class="category-header">
-                <div class="category-icon family">👨‍👩‍👧‍👦</div>
-                <h2 class="category-title family">우리가족 모여라</h2>
-            </div>
-            <div class="card-grid">
-                <a href="pages/family-intro.html" class="card family">
-                    <div class="card-icon">👋</div>
-                    <h3 class="card-title">가족 소개</h3>
-                    <p class="card-desc">우리 가족을 소개합니다</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="pages/album.html" class="card family">
-                    <div class="card-icon">📸</div>
-                    <h3 class="card-title">앨범</h3>
-                    <p class="card-desc">소중한 추억을 담은 사진들</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="pages/schedule.html" class="card family">
-                    <div class="card-icon">📅</div>
-                    <h3 class="card-title">일정</h3>
-                    <p class="card-desc">가족 일정 및 기념일</p>
-                    <span class="card-arrow">→</span>
-                </a>
-            </div>
-        </section>
+<div class="scan-line"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
 
-        <!-- 슬기로운 생활 -->
-        <section class="category-section">
-            <div class="category-header">
-                <div class="category-icon life">💡</div>
-                <h2 class="category-title life">슬기로운 생활</h2>
-            </div>
-            <div class="card-grid">
-                <a href="pages/lotto.html" class="card life">
-                    <div class="card-icon">🎰</div>
-                    <h3 class="card-title">로또 번호 생성기</h3>
-                    <p class="card-desc">행운의 번호를 생성해보세요</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="pages/recipe.html" class="card life">
-                    <div class="card-icon">🍳</div>
-                    <h3 class="card-title">요리 레시피</h3>
-                    <p class="card-desc">맛있는 가족 요리 레시피</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="pages/finance.html" class="card life">
-                    <div class="card-icon">💰</div>
-                    <h3 class="card-title">금융관련 지식모음</h3>
-                    <p class="card-desc">알아두면 좋은 금융 정보</p>
-                    <span class="card-arrow">→</span>
-                </a>
-            </div>
-        </section>
+<nav>
+  <a href="index.html" class="nav-logo">EASY LIFE</a>
+  <ul class="nav-links">
+    <li><a href="#family">가족</a></li>
+    <li><a href="#life">생활</a></li>
+    <li><a href="#etc">기타</a></li>
+  </ul>
+</nav>
 
-        <!-- 기타 -->
-        <section class="category-section">
-            <div class="category-header">
-                <div class="category-icon etc">📋</div>
-                <h2 class="category-title etc">기타</h2>
-            </div>
-            <div class="card-grid">
-                <a href="pages/notice.html" class="card etc">
-                    <div class="card-icon">📢</div>
-                    <h3 class="card-title">공지사항</h3>
-                    <p class="card-desc">중요한 소식을 전합니다</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="pages/contact.html" class="card etc">
-                    <div class="card-icon">✉️</div>
-                    <h3 class="card-title">제휴문의</h3>
-                    <p class="card-desc">문의사항을 남겨주세요</p>
-                    <span class="card-arrow">→</span>
-                </a>
-            </div>
-        </section>
+<!-- 히어로 -->
+<section class="hero">
+  <div class="hero-ring ring-1"></div>
+  <div class="hero-ring ring-2"></div>
 
-        <footer class="footer">
-            <p>© 2024 Easy Life - 사랑이 넘치는 가족</p>
-        </footer>
+  <div class="hero-content">
+    <div class="hero-tag">SYSTEM ONLINE — FAMILY HUB</div>
+    <h1 class="hero-title">
+      <span class="line-1">사랑이 넘치는</span>
+      <span class="line-2">EASY LIFE</span>
+    </h1>
+    <p class="hero-desc">
+      가족과 함께하는 스마트 라이프 플랫폼.<br>
+      일상을 더 풍요롭고 즐겁게 만들어줍니다.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" id="counterMembers">0</span>
+        <div class="stat-label">가족 구성원</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="counterServices">0</span>
+        <div class="stat-label">서비스</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <div class="stat-label">행복</div>
+      </div>
     </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- 우리가족 모여라 -->
+<div class="divider"></div>
+<section class="cat-family" id="family">
+  <div class="section-tag">우리가족 모여라</div>
+  <h2 class="section-title">소중한 <span class="glow">가족</span></h2>
+  <div class="section-line"></div>
+
+  <div class="cards-grid">
+    <a href="pages/family-intro.html" class="card-link">
+      <span class="card-num">01</span>
+      <div class="card-icon-box">👋</div>
+      <h3 class="card-title">가족 소개</h3>
+      <p class="card-desc">우리 가족을 소개합니다</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="pages/album.html" class="card-link">
+      <span class="card-num">02</span>
+      <div class="card-icon-box">📸</div>
+      <h3 class="card-title">앨범</h3>
+      <p class="card-desc">소중한 추억을 담은 사진들</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="pages/schedule.html" class="card-link">
+      <span class="card-num">03</span>
+      <div class="card-icon-box">📅</div>
+      <h3 class="card-title">일정</h3>
+      <p class="card-desc">가족 일정 및 기념일</p>
+      <span class="card-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- 슬기로운 생활 -->
+<div class="divider"></div>
+<section class="cat-life" id="life">
+  <div class="section-tag">슬기로운 생활</div>
+  <h2 class="section-title">스마트 <span class="glow">라이프</span></h2>
+  <div class="section-line"></div>
+
+  <div class="cards-grid">
+    <a href="pages/casino.html" class="card-link">
+      <span class="card-num">01</span>
+      <div class="card-icon-box">🎰</div>
+      <h3 class="card-title">카지노</h3>
+      <p class="card-desc">로또, 룰렛, 바카라, 전자게임</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="pages/entertainment.html" class="card-link">
+      <span class="card-num">02</span>
+      <div class="card-icon-box">🎮</div>
+      <h3 class="card-title">재미 오락</h3>
+      <p class="card-desc">다양한 재미를 즐겨보세요</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="pages/finance.html" class="card-link">
+      <span class="card-num">03</span>
+      <div class="card-icon-box">💰</div>
+      <h3 class="card-title">금융관련 지식모음</h3>
+      <p class="card-desc">알아두면 좋은 금융 정보</p>
+      <span class="card-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- 기타 -->
+<div class="divider"></div>
+<section class="cat-etc" id="etc">
+  <div class="section-tag">기타</div>
+  <h2 class="section-title">추가 <span class="glow">서비스</span></h2>
+  <div class="section-line"></div>
+
+  <div class="cards-grid">
+    <a href="pages/notice.html" class="card-link">
+      <span class="card-num">01</span>
+      <div class="card-icon-box">📢</div>
+      <h3 class="card-title">공지사항</h3>
+      <p class="card-desc">중요한 소식을 전합니다</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="pages/contact.html" class="card-link">
+      <span class="card-num">02</span>
+      <div class="card-icon-box">✉️</div>
+      <h3 class="card-title">제휴문의</h3>
+      <p class="card-desc">문의사항을 남겨주세요</p>
+      <span class="card-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">◈ EASY LIFE</div>
+  <div class="footer-copy">© 2026 EASY LIFE — 사랑이 넘치는 가족</div>
+</footer>
+
+<script>
+  // 카운터 애니메이션
+  function animateCounter(el, target, duration) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = Math.floor(start);
+    }, 16);
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(document.getElementById('counterMembers'), 4, 1500);
+        animateCounter(document.getElementById('counterServices'), 12, 2000);
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+  obs.observe(document.querySelector('.hero-stats'));
+
+  // 마우스 이동에 따른 배경 미세 이동
+  document.addEventListener('mousemove', (e) => {
+    const orbs = document.querySelectorAll('.bg-orb');
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    orbs.forEach((orb, i) => {
+      orb.style.transform = `translate(${x * (i + 1) * 0.3}px, ${y * (i + 1) * 0.3}px)`;
+    });
+  });
+
+  // 스크롤 시 네비 변경
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(2,8,16,0.98)';
+      nav.style.borderBottomColor = 'rgba(0,229,255,0.15)';
+    } else {
+      nav.style.background = 'linear-gradient(180deg, rgba(2,8,16,0.95) 0%, rgba(2,8,16,0.0) 100%)';
+      nav.style.borderBottomColor = 'rgba(0,229,255,0.1)';
+    }
+  });
+
+  // 스크롤 등장 애니메이션
+  const fadeEls = document.querySelectorAll('.cat-family, .cat-life, .cat-etc');
+  const fadeObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  fadeEls.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(40px)';
+    el.style.transition = 'all 0.8s ease';
+    fadeObs.observe(el);
+  });
+</script>
 </body>
 </html>

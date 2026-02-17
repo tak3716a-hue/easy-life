@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카지노 — Easy Life</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-black: #020810;
+    --blue-glow: #0066ff;
+    --cyan: #00e5ff;
+    --white: #e8f4ff;
+    --grid-color: rgba(0, 102, 255, 0.08);
+    --accent: #ff6b35;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--deep-black);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .scan-line {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
+    pointer-events: none;
+    z-index: 9999;
+    animation: scanDown 6s linear infinite;
+  }
+
+  @keyframes scanDown {
+    from { top: 0; opacity: 1; }
+    90% { opacity: 1; }
+    to { top: 100vh; opacity: 0; }
+  }
+
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .bg-orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    bottom: 50px; left: -100px;
+    animation: orbFloat 8s ease-in-out infinite -4s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* ── 네비 ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    height: 70px;
+    background: rgba(2,8,16,0.95);
+    border-bottom: 1px solid rgba(0,229,255,0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0,229,255,0.8);
+    text-decoration: none;
+  }
+  .nav-logo::before { content: '◈'; margin-right: 10px; }
+
+  .back-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(232,244,255,0.5);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .back-link:hover { color: var(--cyan); }
+  .back-link::before {
+    content: '←';
+    font-size: 16px;
+  }
+
+  /* ── 헤더 ── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 130px 60px 80px;
+    text-align: center;
+  }
+
+  .page-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
+  .page-tag::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .page-tag::after {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .page-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    animation: fadeInUp 0.8s ease 0.4s both;
+  }
+
+  .page-title .glow {
+    background: linear-gradient(90deg, var(--accent), #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(255,107,53,0.4));
+  }
+
+  .page-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(232,244,255,0.45);
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease 0.6s both;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 카드 그리드 ── */
+  .content-section {
+    position: relative;
+    z-index: 1;
+    padding: 0 60px 100px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .card-link {
+    border: 1px solid rgba(0,229,255,0.1);
+    padding: 40px 28px;
+    background: rgba(5,13,26,0.8);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    display: block;
+    text-decoration: none;
+    color: var(--white);
+  }
+
+  .card-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 0;
+    background: linear-gradient(180deg, transparent, rgba(255,107,53,0.06));
+    transition: height 0.4s;
+  }
+
+  .card-link:hover::before { height: 100%; }
+  .card-link:hover {
+    border-color: rgba(255,107,53,0.4);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,107,53,0.06);
+  }
+
+  .card-num {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.12);
+  }
+
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(255,107,53,0.3));
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(232,244,255,0.4);
+    font-weight: 300;
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 24px; right: 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    color: rgba(255,107,53,0.3);
+    transition: all 0.3s;
+  }
+
+  .card-link:hover .card-arrow {
+    color: var(--accent);
+    transform: translate(4px, -4px);
+  }
+
+  /* ── 경고 ── */
+  .warning-bar {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto 60px;
+    padding: 20px 30px;
+    border: 1px solid rgba(255,107,53,0.15);
+    background: rgba(255,107,53,0.03);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(232,244,255,0.4);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .warning-bar strong {
+    color: var(--accent);
+  }
+
+  /* ── 푸터 ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0,229,255,0.08);
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 900;
+    color: rgba(0,229,255,0.4);
+    letter-spacing: 4px;
+  }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(232,244,255,0.2);
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--deep-black); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.3); border-radius: 2px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .page-header { padding: 110px 24px 60px; }
+    .content-section { padding: 0 24px 60px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 30px 24px; }
+    .warning-bar { margin: 0 24px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scan-line"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<nav>
+  <a href="../index.html" class="nav-logo">EASY LIFE</a>
+  <a href="../index.html" class="back-link">홈으로</a>
+</nav>
+
+<div class="page-header">
+  <div class="page-tag">CASINO ZONE</div>
+  <h1 class="page-title"><span class="glow">CASINO</span></h1>
+  <p class="page-desc">로또, 룰렛, 바카라, 전자게임</p>
+</div>
+
+<div class="content-section">
+  <div class="cards-grid">
+    <a href="lotto.html" class="card-link">
+      <span class="card-num">01</span>
+      <span class="card-icon">🎱</span>
+      <h3 class="card-title">로또</h3>
+      <p class="card-desc">행운의 로또 번호를 생성해보세요. AI 기반 번호 추천.</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="roulette.html" class="card-link">
+      <span class="card-num">02</span>
+      <span class="card-icon">🎡</span>
+      <h3 class="card-title">룰렛</h3>
+      <p class="card-desc">스릴 넘치는 유러피안 룰렛. 리얼 카지노 경험.</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="baccarat.html" class="card-link">
+      <span class="card-num">03</span>
+      <span class="card-icon">🃏</span>
+      <h3 class="card-title">바카라</h3>
+      <p class="card-desc">클래식 카드 게임. 뱅커 vs 플레이어.</p>
+      <span class="card-arrow">↗</span>
+    </a>
+    <a href="arcade.html" class="card-link">
+      <span class="card-num">04</span>
+      <span class="card-icon">🕹️</span>
+      <h3 class="card-title">전자게임</h3>
+      <p class="card-desc">다양한 전자 게임을 즐겨보세요.</p>
+      <span class="card-arrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<div class="content-section">
+  <div class="warning-bar">
+    <strong>// WARNING —</strong> 이 게임들은 오락 목적으로만 제공됩니다. 실제 도박은 법적 제한이 있으며, 책임감 있는 게임을 권장합니다.
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">◈ EASY LIFE</div>
+  <div class="footer-copy">© 2026 EASY LIFE — CASINO</div>
+</footer>
+
+<script>
+  // 스크롤 등장 애니메이션
+  const cards = document.querySelectorAll('.card-link');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  cards.forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px)';
+    card.style.transition = `all 0.6s ease ${i * 0.1}s`;
+    obs.observe(card);
+  });
+</script>
+</body>
+</html>

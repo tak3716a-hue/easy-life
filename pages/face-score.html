@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 얼굴 점수는 몇점일까! - Easy Life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --life: #4ecdc4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid var(--life);
+            border-radius: 10px;
+            color: var(--life);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--life);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .content-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--life);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, var(--life), #26d0ce);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 15px;
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .analyze-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 20px;
+            border: 1px solid var(--life);
+        }
+
+        .score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            color: var(--primary);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: var(--life);
+            margin-bottom: 15px;
+        }
+
+        .score-message {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+        }
+
+        .retry-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid var(--life);
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: var(--life);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(78, 205, 196, 0.3);
+            border-top-color: var(--life);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="entertainment.html" class="back-btn">← 재미 오락</a>
+
+        <header>
+            <h1>내 얼굴 점수는 몇점일까!</h1>
+            <p class="subtitle">AI가 분석하는 나의 얼굴 점수</p>
+        </header>
+
+        <div class="content-panel">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📷</div>
+                <p class="upload-text">사진을 업로드하세요</p>
+                <p class="upload-hint">클릭하거나 드래그해서 업로드</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+            <img id="preview" alt="미리보기">
+            <button class="analyze-btn" onclick="analyzePhoto()">분석하기</button>
+
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>AI가 분석 중입니다...</p>
+            </div>
+
+            <div class="result">
+                <p class="score-label">당신의 얼굴 점수는</p>
+                <div class="score"><span id="scoreValue">0</span>점</div>
+                <p class="score-message" id="scoreMessage"></p>
+                <button class="retry-btn" onclick="location.reload()">다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const uploadArea = document.querySelector('.upload-area');
+        const analyzeBtn = document.querySelector('.analyze-btn');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    analyzeBtn.style.display = 'inline-block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function analyzePhoto() {
+            const loading = document.querySelector('.loading');
+            const result = document.querySelector('.result');
+
+            analyzeBtn.style.display = 'none';
+            loading.style.display = 'block';
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+
+                const score = Math.floor(Math.random() * 21) + 80; // 80-100
+                const scoreValue = document.getElementById('scoreValue');
+                const scoreMessage = document.getElementById('scoreMessage');
+
+                let currentScore = 0;
+                const interval = setInterval(() => {
+                    currentScore += 2;
+                    if (currentScore >= score) {
+                        currentScore = score;
+                        clearInterval(interval);
+                    }
+                    scoreValue.textContent = currentScore;
+                }, 30);
+
+                const messages = [
+                    "와우! 정말 매력적인 얼굴이시네요! 자신감을 가지세요!",
+                    "빛나는 외모의 소유자! 오늘도 멋진 하루 보내세요!",
+                    "당신의 미소가 세상을 밝히고 있어요!",
+                    "눈부신 아름다움! 자신을 사랑하세요!",
+                    "매력 넘치는 외모! 당신은 특별합니다!"
+                ];
+                scoreMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

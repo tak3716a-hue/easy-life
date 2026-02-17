@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 화장 점수는 몇점! - Easy Life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --life: #4ecdc4;
+            --makeup: #e056fd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid var(--life);
+            border-radius: 10px;
+            color: var(--life);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--makeup);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .content-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(224, 86, 253, 0.2);
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--makeup);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(224, 86, 253, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, var(--makeup), #be2edd);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .analyze-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(224, 86, 253, 0.3);
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--makeup), #be2edd);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px rgba(224, 86, 253, 0.4);
+        }
+
+        .score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: white;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .grade {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .analysis {
+            background: rgba(224, 86, 253, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .analysis-title {
+            color: var(--makeup);
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .analysis-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(224, 86, 253, 0.2);
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .item-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--makeup), var(--primary));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .item-value {
+            color: var(--makeup);
+            font-weight: 700;
+            width: 40px;
+            text-align: right;
+        }
+
+        .tip {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .retry-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid var(--makeup);
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: var(--makeup);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--makeup);
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(224, 86, 253, 0.3);
+            border-top-color: var(--makeup);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="entertainment.html" class="back-btn">← 재미 오락</a>
+
+        <header>
+            <h1>나의 화장 점수는 몇점!</h1>
+            <p class="subtitle">오늘의 메이크업을 분석해보세요</p>
+        </header>
+
+        <div class="content-panel">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">💄</div>
+                <p class="upload-text">화장한 사진을 업로드하세요</p>
+                <p class="upload-hint">클릭하거나 드래그해서 업로드</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+            <img id="preview" alt="미리보기">
+            <button class="analyze-btn" onclick="analyzePhoto()">분석하기</button>
+
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>메이크업을 분석 중입니다...</p>
+            </div>
+
+            <div class="result">
+                <div class="score-circle">
+                    <div class="score"><span id="scoreValue">0</span></div>
+                    <div class="score-label">점</div>
+                </div>
+                <p class="grade" id="grade"></p>
+
+                <div class="analysis">
+                    <p class="analysis-title">상세 분석</p>
+                    <div class="analysis-item">
+                        <span class="item-name">베이스 메이크업</span>
+                        <div class="item-score">
+                            <div class="score-bar"><div class="score-fill" id="baseBar"></div></div>
+                            <span class="item-value" id="baseScore">0</span>
+                        </div>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="item-name">아이 메이크업</span>
+                        <div class="item-score">
+                            <div class="score-bar"><div class="score-fill" id="eyeBar"></div></div>
+                            <span class="item-value" id="eyeScore">0</span>
+                        </div>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="item-name">립 메이크업</span>
+                        <div class="item-score">
+                            <div class="score-bar"><div class="score-fill" id="lipBar"></div></div>
+                            <span class="item-value" id="lipScore">0</span>
+                        </div>
+                    </div>
+                    <div class="analysis-item">
+                        <span class="item-name">전체 조화</span>
+                        <div class="item-score">
+                            <div class="score-bar"><div class="score-fill" id="harmonyBar"></div></div>
+                            <span class="item-value" id="harmonyScore">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="tip" id="tip"></p>
+                <button class="retry-btn" onclick="location.reload()">다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const uploadArea = document.querySelector('.upload-area');
+        const analyzeBtn = document.querySelector('.analyze-btn');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    analyzeBtn.style.display = 'inline-block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function analyzePhoto() {
+            const loading = document.querySelector('.loading');
+            const result = document.querySelector('.result');
+
+            analyzeBtn.style.display = 'none';
+            loading.style.display = 'block';
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+
+                const baseScore = Math.floor(Math.random() * 20) + 80;
+                const eyeScore = Math.floor(Math.random() * 20) + 80;
+                const lipScore = Math.floor(Math.random() * 20) + 80;
+                const harmonyScore = Math.floor(Math.random() * 20) + 80;
+                const totalScore = Math.floor((baseScore + eyeScore + lipScore + harmonyScore) / 4);
+
+                // Animate total score
+                const scoreValue = document.getElementById('scoreValue');
+                let currentScore = 0;
+                const interval = setInterval(() => {
+                    currentScore += 2;
+                    if (currentScore >= totalScore) {
+                        currentScore = totalScore;
+                        clearInterval(interval);
+                    }
+                    scoreValue.textContent = currentScore;
+                }, 30);
+
+                // Set grades
+                const grades = {
+                    95: "완벽한 메이크업 아티스트!",
+                    90: "프로페셔널 수준!",
+                    85: "뷰티 인플루언서 감!",
+                    80: "센스 있는 메이크업!"
+                };
+
+                let grade = "센스 있는 메이크업!";
+                for (const [score, text] of Object.entries(grades).reverse()) {
+                    if (totalScore >= parseInt(score)) {
+                        grade = text;
+                        break;
+                    }
+                }
+                document.getElementById('grade').textContent = grade;
+
+                // Animate detail bars
+                setTimeout(() => {
+                    document.getElementById('baseBar').style.width = baseScore + '%';
+                    document.getElementById('baseScore').textContent = baseScore;
+
+                    document.getElementById('eyeBar').style.width = eyeScore + '%';
+                    document.getElementById('eyeScore').textContent = eyeScore;
+
+                    document.getElementById('lipBar').style.width = lipScore + '%';
+                    document.getElementById('lipScore').textContent = lipScore;
+
+                    document.getElementById('harmonyBar').style.width = harmonyScore + '%';
+                    document.getElementById('harmonyScore').textContent = harmonyScore;
+                }, 500);
+
+                // Tips
+                const tips = [
+                    "오늘의 메이크업 완벽해요! 이대로 유지하세요!",
+                    "색조 조합이 정말 잘 어울려요! 센스 만점!",
+                    "피부 표현이 자연스럽고 예뻐요!",
+                    "눈매 강조가 매력적이에요! 포인트를 잘 잡았어요!",
+                    "전체적인 밸런스가 좋아요! 오늘 빛나세요!"
+                ];
+                document.getElementById('tip').textContent = tips[Math.floor(Math.random() * tips.length)];
+
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

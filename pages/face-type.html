@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 얼굴상 확인하기 - Easy Life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --life: #4ecdc4;
+            --cat: #ff6b9d;
+            --dog: #ffa502;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid var(--life);
+            border-radius: 10px;
+            color: var(--life);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--life);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .content-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--life);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, var(--life), #26d0ce);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 15px;
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .analyze-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-card.cat {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(255, 107, 157, 0.1));
+            border: 2px solid var(--cat);
+        }
+
+        .result-card.dog {
+            background: linear-gradient(135deg, rgba(255, 165, 2, 0.2), rgba(255, 165, 2, 0.1));
+            border: 2px solid var(--dog);
+        }
+
+        .result-icon {
+            font-size: 6rem;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .result-card.cat .result-title { color: var(--cat); }
+        .result-card.dog .result-title { color: var(--dog); }
+
+        .result-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .trait {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .result-card.cat .trait {
+            background: rgba(255, 107, 157, 0.3);
+            color: var(--cat);
+        }
+
+        .result-card.dog .trait {
+            background: rgba(255, 165, 2, 0.3);
+            color: var(--dog);
+        }
+
+        .retry-btn {
+            background: transparent;
+            border: 1px solid var(--life);
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: var(--life);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(78, 205, 196, 0.3);
+            border-top-color: var(--life);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="entertainment.html" class="back-btn">← 재미 오락</a>
+
+        <header>
+            <h1>내 얼굴상 확인하기</h1>
+            <p class="subtitle">고양이상 or 강아지상</p>
+        </header>
+
+        <div class="content-panel">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">🐱🐶</div>
+                <p class="upload-text">사진을 업로드하세요</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+            <img id="preview" alt="미리보기">
+            <button class="analyze-btn" onclick="analyzePhoto()">분석하기</button>
+
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>AI가 분석 중입니다...</p>
+            </div>
+
+            <div class="result">
+                <div class="result-card" id="resultCard">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <h2 class="result-title" id="resultTitle"></h2>
+                    <p class="result-desc" id="resultDesc"></p>
+                    <div class="traits" id="traits"></div>
+                </div>
+                <button class="retry-btn" onclick="location.reload()">다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const uploadArea = document.querySelector('.upload-area');
+        const analyzeBtn = document.querySelector('.analyze-btn');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    analyzeBtn.style.display = 'inline-block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function analyzePhoto() {
+            const loading = document.querySelector('.loading');
+            const result = document.querySelector('.result');
+
+            analyzeBtn.style.display = 'none';
+            loading.style.display = 'block';
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                result.style.display = 'block';
+
+                const isCat = Math.random() > 0.5;
+                const resultCard = document.getElementById('resultCard');
+                const resultIcon = document.getElementById('resultIcon');
+                const resultTitle = document.getElementById('resultTitle');
+                const resultDesc = document.getElementById('resultDesc');
+                const traits = document.getElementById('traits');
+
+                if (isCat) {
+                    resultCard.className = 'result-card cat';
+                    resultIcon.textContent = '🐱';
+                    resultTitle.textContent = '고양이상';
+                    resultDesc.textContent = '도도하고 신비로운 매력의 소유자! 차가워 보이지만 알고 보면 다정한 당신, 사람들이 자꾸 끌리는 묘한 매력이 있어요.';
+                    traits.innerHTML = `
+                        <span class="trait">도도함</span>
+                        <span class="trait">신비로움</span>
+                        <span class="trait">날카로운 눈매</span>
+                        <span class="trait">독립적</span>
+                        <span class="trait">세련됨</span>
+                    `;
+                } else {
+                    resultCard.className = 'result-card dog';
+                    resultIcon.textContent = '🐶';
+                    resultTitle.textContent = '강아지상';
+                    resultDesc.textContent = '친근하고 사랑스러운 매력의 소유자! 누구에게나 호감을 주는 밝은 에너지로 주변을 환하게 만들어요.';
+                    traits.innerHTML = `
+                        <span class="trait">친근함</span>
+                        <span class="trait">밝은 미소</span>
+                        <span class="trait">동그란 눈</span>
+                        <span class="trait">사교적</span>
+                        <span class="trait">귀여움</span>
+                    `;
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나에게 맞는 이상형 찾기 - Easy Life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --life: #4ecdc4;
+            --love: #ff6b9d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid var(--life);
+            border-radius: 10px;
+            color: var(--life);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--love);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .content-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 107, 157, 0.2);
+            text-align: center;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 107, 157, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--love);
+            box-shadow: 0 0 10px var(--love);
+        }
+
+        .progress-dot.done {
+            background: var(--love);
+        }
+
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 18px 25px;
+            background: rgba(255, 107, 157, 0.1);
+            border: 1px solid rgba(255, 107, 157, 0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: rgba(255, 107, 157, 0.2);
+            border-color: var(--love);
+            transform: translateX(5px);
+        }
+
+        .result {
+            display: none;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--love);
+            margin-bottom: 15px;
+        }
+
+        .result-type {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .result-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 107, 157, 0.1);
+            border-radius: 15px;
+        }
+
+        .compatibility {
+            margin-bottom: 25px;
+        }
+
+        .compatibility-title {
+            font-size: 1rem;
+            color: var(--love);
+            margin-bottom: 10px;
+        }
+
+        .compatibility-types {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .compat-type {
+            padding: 10px 20px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .retry-btn {
+            background: transparent;
+            border: 1px solid var(--love);
+            padding: 12px 30px;
+            border-radius: 10px;
+            color: var(--love);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: var(--love);
+            color: var(--secondary);
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 107, 157, 0.3);
+            border-top-color: var(--love);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="entertainment.html" class="back-btn">← 재미 오락</a>
+
+        <header>
+            <h1>나에게 맞는 이상형 찾기</h1>
+            <p class="subtitle">테스트로 알아보는 나의 이상형</p>
+        </header>
+
+        <div class="content-panel">
+            <div class="question-container" id="questionContainer">
+                <div class="progress" id="progress"></div>
+                <p class="question" id="question"></p>
+                <div class="options" id="options"></div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>이상형을 분석 중입니다...</p>
+            </div>
+
+            <div class="result" id="result">
+                <div class="result-icon">💕</div>
+                <h2 class="result-title">당신의 이상형은</h2>
+                <p class="result-type" id="resultType"></p>
+                <p class="result-desc" id="resultDesc"></p>
+                <div class="compatibility">
+                    <p class="compatibility-title">잘 맞는 타입</p>
+                    <div class="compatibility-types" id="compatTypes"></div>
+                </div>
+                <button class="retry-btn" onclick="location.reload()">다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "주말에 데이트를 한다면?",
+                options: ["집에서 영화 보기", "야외 활동/여행", "맛집 탐방", "문화생활 (전시/공연)"]
+            },
+            {
+                q: "연인에게 가장 중요한 것은?",
+                options: ["유머 감각", "다정함과 배려", "똑똑함과 지적인 대화", "든든한 신뢰감"]
+            },
+            {
+                q: "선호하는 연락 스타일은?",
+                options: ["수시로 연락하기", "적당히 자유롭게", "필요할 때만", "영상통화 선호"]
+            },
+            {
+                q: "갈등이 생겼을 때?",
+                options: ["바로 대화로 해결", "시간을 두고 생각", "상대가 먼저 말할 때까지", "유머로 분위기 전환"]
+            },
+            {
+                q: "이상형의 외모 스타일은?",
+                options: ["귀엽고 사랑스러운", "시크하고 세련된", "건강하고 활동적인", "지적이고 차분한"]
+            }
+        ];
+
+        const idealTypes = [
+            {
+                type: "다정한 로맨티스트",
+                desc: "당신은 따뜻하고 다정한 연인을 원해요. 작은 것에도 감동하고, 서로의 일상을 공유하며 소소한 행복을 찾는 관계를 꿈꾸고 있어요. 기념일을 챙기고 달달한 메시지를 보내는 로맨틱한 사람이 딱이에요!",
+                compat: ["따뜻한 집순이/집돌이", "감성적인 예술가 타입"]
+            },
+            {
+                type: "유쾌한 에너자이저",
+                desc: "당신은 함께 있으면 웃음이 끊이지 않는 밝은 연인을 원해요. 유머 감각이 있고 어떤 상황에서도 긍정적인 에너지를 주는 사람과 함께할 때 행복해져요!",
+                compat: ["개그맨 타입", "사교적인 인싸"]
+            },
+            {
+                type: "듬직한 리더",
+                desc: "당신은 믿음직하고 책임감 있는 연인을 원해요. 결정을 잘 내리고 어려울 때 의지가 되는 든든한 사람이 이상형이에요. 말보다 행동으로 보여주는 타입에게 끌려요!",
+                compat: ["카리스마 있는 리더", "묵묵히 지켜주는 타입"]
+            },
+            {
+                type: "지적인 대화 상대",
+                desc: "당신은 깊이 있는 대화를 나눌 수 있는 연인을 원해요. 서로의 생각을 공유하고 새로운 것을 함께 배워가는 관계를 꿈꿔요. 똑똑하고 호기심 많은 사람에게 매력을 느껴요!",
+                compat: ["책벌레 타입", "호기심 많은 탐험가"]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        function init() {
+            renderProgress();
+            renderQuestion();
+        }
+
+        function renderProgress() {
+            const progress = document.getElementById('progress');
+            progress.innerHTML = questions.map((_, i) =>
+                `<div class="progress-dot ${i < currentQuestion ? 'done' : ''} ${i === currentQuestion ? 'active' : ''}"></div>`
+            ).join('');
+        }
+
+        function renderQuestion() {
+            const questionEl = document.getElementById('question');
+            const optionsEl = document.getElementById('options');
+
+            questionEl.textContent = questions[currentQuestion].q;
+            optionsEl.innerHTML = questions[currentQuestion].options.map((opt, i) =>
+                `<div class="option" onclick="selectOption(${i})">${opt}</div>`
+            ).join('');
+        }
+
+        function selectOption(index) {
+            answers.push(index);
+            currentQuestion++;
+
+            if (currentQuestion >= questions.length) {
+                showLoading();
+            } else {
+                renderProgress();
+                renderQuestion();
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            setTimeout(showResult, 2000);
+        }
+
+        function showResult() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+
+            const typeIndex = Math.floor(Math.random() * idealTypes.length);
+            const type = idealTypes[typeIndex];
+
+            document.getElementById('resultType').textContent = type.type;
+            document.getElementById('resultDesc').textContent = type.desc;
+            document.getElementById('compatTypes').innerHTML = type.compat.map(t =>
+                `<span class="compat-type">${t}</span>`
+            ).join('');
+        }
+
+        init();
+    </script>
+</body>
+</html>

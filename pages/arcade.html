@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전자게임 - Easy Life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --life: #4ecdc4;
+            --slot1: #e74c3c;
+            --slot2: #3498db;
+            --slot3: #27ae60;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid var(--life);
+            border-radius: 10px;
+            color: var(--life);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--life);
+            color: var(--secondary);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .game-panel {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            text-align: center;
+        }
+
+        .slot-machine {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 5px solid var(--primary);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .slot-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .reels {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .reel {
+            width: 100px;
+            height: 120px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .reel-inner {
+            transition: transform 0.1s ease;
+        }
+
+        .reel.spinning .reel-inner {
+            animation: slotSpin 0.1s linear infinite;
+        }
+
+        @keyframes slotSpin {
+            0% { transform: translateY(-20px); }
+            100% { transform: translateY(20px); }
+        }
+
+        .jackpot {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            min-height: 50px;
+            margin: 20px 0;
+        }
+
+        .result-message.win {
+            color: var(--primary);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: pulse 0.5s ease infinite;
+        }
+
+        .result-message.lose {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .spin-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, var(--primary), #ffed4e);
+            border: none;
+            border-radius: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spin-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .spin-btn:hover::before {
+            left: 100%;
+        }
+
+        .spin-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .paytable {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+        }
+
+        .paytable-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .paytable-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .paytable-item:last-child {
+            border-bottom: none;
+        }
+
+        .paytable-symbols {
+            font-size: 1.5rem;
+        }
+
+        .paytable-payout {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        @media (max-width: 500px) {
+            .reel {
+                width: 80px;
+                height: 100px;
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="casino.html" class="back-btn">← 카지노</a>
+
+        <header>
+            <h1>SLOT MACHINE</h1>
+            <p class="subtitle">행운의 슬롯 머신</p>
+        </header>
+
+        <div class="game-panel">
+            <div class="slot-machine">
+                <div class="slot-title">LUCKY 777</div>
+                <div class="reels">
+                    <div class="reel" id="reel1">
+                        <span class="reel-inner">🍒</span>
+                    </div>
+                    <div class="reel" id="reel2">
+                        <span class="reel-inner">🍋</span>
+                    </div>
+                    <div class="reel" id="reel3">
+                        <span class="reel-inner">🍇</span>
+                    </div>
+                </div>
+                <div class="jackpot">JACKPOT: <span id="jackpot">1,000,000</span></div>
+            </div>
+
+            <div class="result-message" id="result"></div>
+
+            <button class="spin-btn" id="spinBtn" onclick="spin()">SPIN!</button>
+
+            <div class="paytable">
+                <div class="paytable-title">배당표</div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">7️⃣ 7️⃣ 7️⃣</span>
+                    <span class="paytable-payout">JACKPOT!</span>
+                </div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">💎 💎 💎</span>
+                    <span class="paytable-payout">x100</span>
+                </div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">🍒 🍒 🍒</span>
+                    <span class="paytable-payout">x50</span>
+                </div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">🍋 🍋 🍋</span>
+                    <span class="paytable-payout">x30</span>
+                </div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">🍇 🍇 🍇</span>
+                    <span class="paytable-payout">x20</span>
+                </div>
+                <div class="paytable-item">
+                    <span class="paytable-symbols">⭐ ⭐ ⭐</span>
+                    <span class="paytable-payout">x10</span>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">총 스핀</div>
+                    <div class="stat-value" id="totalSpins">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">당첨</div>
+                    <div class="stat-value" id="wins">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">잭팟</div>
+                    <div class="stat-value" id="jackpots">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const symbols = ['🍒', '🍋', '🍇', '⭐', '💎', '7️⃣'];
+        const weights = [30, 25, 20, 15, 8, 2]; // 확률 가중치
+
+        let totalSpins = parseInt(localStorage.getItem('slot_spins') || '0');
+        let wins = parseInt(localStorage.getItem('slot_wins') || '0');
+        let jackpots = parseInt(localStorage.getItem('slot_jackpots') || '0');
+        let isSpinning = false;
+
+        updateStats();
+
+        function getRandomSymbol() {
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+
+            for (let i = 0; i < symbols.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    return symbols[i];
+                }
+            }
+            return symbols[0];
+        }
+
+        function spin() {
+            if (isSpinning) return;
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = 'result-message';
+
+            const reels = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+
+            // Start spinning animation
+            reels.forEach(reel => reel.classList.add('spinning'));
+
+            // Rapid symbol changes
+            const spinInterval = setInterval(() => {
+                reels.forEach(reel => {
+                    reel.querySelector('.reel-inner').textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                });
+            }, 50);
+
+            // Stop reels one by one
+            const results = [];
+            const stopTimes = [1000, 1500, 2000];
+
+            stopTimes.forEach((time, index) => {
+                setTimeout(() => {
+                    const result = getRandomSymbol();
+                    results.push(result);
+                    reels[index].classList.remove('spinning');
+                    reels[index].querySelector('.reel-inner').textContent = result;
+
+                    if (index === 2) {
+                        clearInterval(spinInterval);
+                        checkResult(results);
+                    }
+                }, time);
+            });
+        }
+
+        function checkResult(results) {
+            const resultEl = document.getElementById('result');
+            totalSpins++;
+
+            if (results[0] === results[1] && results[1] === results[2]) {
+                wins++;
+
+                if (results[0] === '7️⃣') {
+                    jackpots++;
+                    resultEl.textContent = '🎉 JACKPOT!!! 🎉';
+                    resultEl.className = 'result-message win';
+                } else if (results[0] === '💎') {
+                    resultEl.textContent = '💎 대박! x100 당첨! 💎';
+                    resultEl.className = 'result-message win';
+                } else if (results[0] === '🍒') {
+                    resultEl.textContent = '🍒 x50 당첨! 🍒';
+                    resultEl.className = 'result-message win';
+                } else if (results[0] === '🍋') {
+                    resultEl.textContent = '🍋 x30 당첨! 🍋';
+                    resultEl.className = 'result-message win';
+                } else if (results[0] === '🍇') {
+                    resultEl.textContent = '🍇 x20 당첨! 🍇';
+                    resultEl.className = 'result-message win';
+                } else {
+                    resultEl.textContent = '⭐ x10 당첨! ⭐';
+                    resultEl.className = 'result-message win';
+                }
+            } else if (results[0] === results[1] || results[1] === results[2]) {
+                resultEl.textContent = '아깝다! 2개 일치!';
+                resultEl.className = 'result-message lose';
+            } else {
+                resultEl.textContent = '다음 기회에...';
+                resultEl.className = 'result-message lose';
+            }
+
+            localStorage.setItem('slot_spins', totalSpins);
+            localStorage.setItem('slot_wins', wins);
+            localStorage.setItem('slot_jackpots', jackpots);
+            updateStats();
+
+            isSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+        }
+
+        function updateStats() {
+            document.getElementById('totalSpins').textContent = totalSpins;
+            document.getElementById('wins').textContent = wins;
+            document.getElementById('jackpots').textContent = jackpots;
+        }
+    </script>
+</body>
+</html>

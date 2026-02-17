@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>룰렛 - Easy Life Casino</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #1a1a2e;
+            --red: #c0392b;
+            --green: #0d7a3e;
+            --black: #1a1a1a;
+            --felt: #0d5c2e;
+            --wood: #5c3317;
+            --gold-light: #f5e6a3;
+            --gold-dark: #8B6914;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a0a00, #0a0a0a);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* 배경 파티클 */
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 20px 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700, #fff8dc, #DAA520, #FFD700);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: goldShimmer 4s ease infinite;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255, 215, 0, 0.6);
+            letter-spacing: 8px;
+            margin-top: 5px;
+        }
+
+        @keyframes goldShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 메인 레이아웃 */
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* ===== 룰렛 휠 섹션 ===== */
+        .wheel-panel {
+            background: radial-gradient(ellipse at center, rgba(30, 15, 0, 0.9), rgba(10, 5, 0, 0.95));
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.05), inset 0 0 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #rouletteCanvas {
+            width: 400px;
+            height: 400px;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.15));
+        }
+
+        /* 포인터 (다이아몬드) */
+        .pointer-diamond {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .pointer-diamond svg {
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
+        }
+
+        /* 결과 디스플레이 */
+        .result-panel {
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(20,10,0,0.6));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .result-num {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: white;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .result-num.r { background: radial-gradient(circle at 30% 30%, #e74c3c, #8b0000); }
+        .result-num.b { background: radial-gradient(circle at 30% 30%, #333, #000); }
+        .result-num.g { background: radial-gradient(circle at 30% 30%, #27ae60, #0a5c2e); }
+
+        .result-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .result-placeholder {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.4);
+            font-style: italic;
+        }
+
+        /* 히스토리 */
+        .history-bar {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            min-height: 30px;
+        }
+
+        .history-chip {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.2);
+            animation: popIn 0.3s ease;
+        }
+
+        .history-chip.r { background: var(--red); }
+        .history-chip.b { background: #222; }
+        .history-chip.g { background: var(--green); }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* ===== 베팅 섹션 ===== */
+        .betting-panel {
+            background: linear-gradient(180deg, #0a3d1a, #074d22, #0a3d1a);
+            border-radius: 20px;
+            padding: 20px;
+            border: 4px solid var(--wood);
+            box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 80px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .betting-panel::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,215,0,0.1);
+            pointer-events: none;
+        }
+
+        /* 잔액 & 칩 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .balance-box {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .balance-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .balance-value {
+            font-size: 1.6rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        .chip-tray {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chip {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            border: 3px solid rgba(255,255,255,0.3);
+            background-size: 100% 100%;
+        }
+
+        .chip::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,255,255,0.4);
+        }
+
+        .chip:hover { transform: translateY(-3px); }
+        .chip.selected { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(255,215,0,0.5); border-color: var(--primary); }
+
+        .chip-1 { background: radial-gradient(circle at 35% 35%, #fff, #ccc, #999); color: #333; text-shadow: none; }
+        .chip-5 { background: radial-gradient(circle at 35% 35%, #e74c3c, #c0392b, #7b241c); }
+        .chip-10 { background: radial-gradient(circle at 35% 35%, #3498db, #2980b9, #1a5276); }
+        .chip-25 { background: radial-gradient(circle at 35% 35%, #2ecc71, #27ae60, #1a7a42); }
+        .chip-100 { background: radial-gradient(circle at 35% 35%, #2c2c2c, #111, #000); color: var(--primary); }
+
+        /* 베팅 테이블 */
+        .table-grid {
+            display: grid;
+            grid-template-columns: 35px repeat(12, 1fr);
+            gap: 1px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .cell {
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.15s;
+            position: relative;
+            user-select: none;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .cell:hover {
+            filter: brightness(1.5);
+            z-index: 5;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .cell.red { background: var(--red); }
+        .cell.blk { background: var(--black); }
+        .cell.grn { background: var(--green); }
+        .cell.out { background: rgba(255,255,255,0.05); }
+
+        .cell.zero-cell {
+            grid-row: span 3;
+            writing-mode: vertical-rl;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .cell .bet-marker {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, var(--primary), #DAA520);
+            color: #000;
+            font-size: 0.55rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            z-index: 10;
+            animation: popIn 0.2s ease;
+        }
+
+        /* 컬럼 베팅 행 */
+        .col-row {
+            display: grid;
+            grid-template-columns: 35px repeat(12, 1fr);
+            gap: 1px;
+            margin-bottom: 8px;
+        }
+
+        .col-row .cell {
+            height: 30px;
+            font-size: 0.75rem;
+        }
+
+        /* 아웃사이드 베팅 */
+        .outside-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .out-bet {
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.78rem;
+            border-radius: 4px;
+            transition: all 0.15s;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.15);
+            user-select: none;
+        }
+
+        .out-bet:hover {
+            filter: brightness(1.4);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.15);
+        }
+
+        .out-bet.rb { background: var(--red); }
+        .out-bet.bb { background: var(--black); }
+        .out-bet.gb { background: rgba(255,255,255,0.08); }
+
+        .out-bet .bet-marker {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, var(--primary), #DAA520);
+            color: #000;
+            font-size: 0.55rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        /* 액션 버튼 */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, #FFD700, #f39c12, #DAA520);
+            color: #000;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-spin:hover:not(:disabled) {
+            box-shadow: 0 6px 30px rgba(255, 215, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-spin:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-spin.spinning {
+            animation: spinPulse 1s ease infinite;
+        }
+
+        @keyframes spinPulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 4px 40px rgba(255, 215, 0, 0.6); }
+        }
+
+        .btn-clear {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.15);
+            flex: 0.4;
+        }
+
+        .btn-clear:hover { background: rgba(255,255,255,0.15); }
+
+        .btn-rebet {
+            background: rgba(255,215,0,0.1);
+            color: var(--primary);
+            border: 1px solid rgba(255,215,0,0.3);
+            flex: 0.4;
+        }
+
+        .btn-rebet:hover { background: rgba(255,215,0,0.2); }
+
+        /* 현재 베팅 */
+        .bets-info {
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .bets-title {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .bet-total {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255,215,0,0.2);
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        /* 승패 메시지 */
+        .win-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .win-overlay.show { opacity: 1; }
+
+        .win-box {
+            text-align: center;
+            padding: 40px 60px;
+            border-radius: 20px;
+            animation: winBounce 0.6s ease;
+        }
+
+        .win-box.win {
+            background: radial-gradient(ellipse, rgba(255,215,0,0.2), rgba(0,0,0,0.9));
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 100px rgba(255,215,0,0.3);
+        }
+
+        .win-box.lose {
+            background: radial-gradient(ellipse, rgba(192,57,43,0.2), rgba(0,0,0,0.9));
+            border: 2px solid var(--red);
+        }
+
+        .win-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 30px rgba(255,215,0,0.5);
+        }
+
+        .win-label {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .lose-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--red);
+        }
+
+        @keyframes winBounce {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
+            .wheel-wrapper {
+                width: 340px;
+                height: 340px;
+            }
+            #rouletteCanvas {
+                width: 340px;
+                height: 340px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; letter-spacing: 3px; }
+            .wheel-wrapper { width: 300px; height: 300px; }
+            #rouletteCanvas { width: 300px; height: 300px; }
+            .chip { width: 40px; height: 40px; font-size: 0.6rem; }
+            .table-grid { grid-template-columns: 28px repeat(12, 1fr); }
+            .cell { height: 32px; font-size: 0.7rem; }
+            .col-row { grid-template-columns: 28px repeat(12, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="bg-particles" id="bgCanvas"></canvas>
+
+    <div class="container">
+        <a href="casino.html" class="back-btn">← 카지노</a>
+
+        <header>
+            <h1>Roulette</h1>
+            <div class="subtitle">EUROPEAN SINGLE ZERO</div>
+        </header>
+
+        <div class="game-layout">
+            <!-- 좌측: 룰렛 휠 -->
+            <div class="wheel-panel">
+                <div class="wheel-wrapper">
+                    <div class="pointer-diamond">
+                        <svg width="24" height="30" viewBox="0 0 24 30">
+                            <polygon points="12,30 0,10 12,0 24,10" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+                            <polygon points="12,26 3,11 12,3 21,11" fill="url(#goldGrad)"/>
+                            <defs>
+                                <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#fff8dc"/>
+                                    <stop offset="50%" stop-color="#FFD700"/>
+                                    <stop offset="100%" stop-color="#B8860B"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <canvas id="rouletteCanvas" width="800" height="800"></canvas>
+                </div>
+
+                <div class="result-panel" id="resultPanel">
+                    <span class="result-placeholder">Place your bets</span>
+                </div>
+
+                <div class="history-bar" id="historyBar"></div>
+            </div>
+
+            <!-- 우측: 베팅 테이블 -->
+            <div class="betting-panel">
+                <div class="top-bar">
+                    <div class="balance-box">
+                        <div class="balance-label">BALANCE</div>
+                        <div class="balance-value">$<span id="balance">1000</span></div>
+                    </div>
+                    <div class="chip-tray">
+                        <div class="chip chip-1" onclick="selectChip(1)">$1</div>
+                        <div class="chip chip-5 selected" onclick="selectChip(5)">$5</div>
+                        <div class="chip chip-10" onclick="selectChip(10)">$10</div>
+                        <div class="chip chip-25" onclick="selectChip(25)">$25</div>
+                        <div class="chip chip-100" onclick="selectChip(100)">$100</div>
+                    </div>
+                </div>
+
+                <!-- 숫자 테이블 -->
+                <div class="table-grid" id="tableGrid"></div>
+
+                <!-- 더즌 베팅 -->
+                <div class="col-row">
+                    <div class="cell" style="visibility:hidden"></div>
+                    <div class="cell out" style="grid-column: span 4" onclick="placeBet('dozen','1-12')">1st 12</div>
+                    <div class="cell out" style="grid-column: span 4" onclick="placeBet('dozen','13-24')">2nd 12</div>
+                    <div class="cell out" style="grid-column: span 4" onclick="placeBet('dozen','25-36')">3rd 12</div>
+                </div>
+
+                <!-- 아웃사이드 베팅 -->
+                <div class="outside-grid">
+                    <div class="out-bet gb" onclick="placeBet('half','1-18')">1-18</div>
+                    <div class="out-bet gb" onclick="placeBet('evenodd','even')">EVEN</div>
+                    <div class="out-bet rb" onclick="placeBet('color','red')">RED</div>
+                    <div class="out-bet bb" onclick="placeBet('color','black')">BLACK</div>
+                    <div class="out-bet gb" onclick="placeBet('evenodd','odd')">ODD</div>
+                    <div class="out-bet gb" onclick="placeBet('half','19-36')">19-36</div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-clear" onclick="clearBets()">CLEAR</button>
+                    <button class="btn btn-spin" id="spinBtn" onclick="spin()">SPIN</button>
+                    <button class="btn btn-rebet" onclick="rebet()">REBET</button>
+                </div>
+
+                <div class="bets-info">
+                    <div class="bets-title">CURRENT BETS</div>
+                    <div id="betsList"><span style="color:rgba(255,255,255,0.3)">No bets placed</span></div>
+                    <div class="bet-total">TOTAL: $<span id="totalBet">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 승/패 오버레이 -->
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-box" id="winBox"></div>
+    </div>
+
+    <script>
+    // ===== 룰렛 데이터 =====
+    const WHEEL_NUMS = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+    const RED = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+    const SEG = 360 / WHEEL_NUMS.length;
+
+    let balance = parseInt(localStorage.getItem('roulette_balance') || '1000');
+    let selectedChip = 5;
+    let bets = {};
+    let lastBets = {};
+    let spinning = false;
+    let wheelAngle = 0;
+    let history = JSON.parse(localStorage.getItem('roulette_history') || '[]');
+
+    // ===== Canvas 룰렛 휠 =====
+    const canvas = document.getElementById('rouletteCanvas');
+    const ctx = canvas.getContext('2d');
+    const CX = 400, CY = 400, R = 370, IR = 280, CR = 80;
+
+    function getColor(n) {
+        if (n === 0) return '#0d7a3e';
+        return RED.has(n) ? '#c0392b' : '#1a1a1a';
+    }
+
+    function drawWheel(angle) {
+        ctx.clearRect(0, 0, 800, 800);
+
+        // 외곽 나무 테두리
+        ctx.save();
+        const woodGrad = ctx.createRadialGradient(CX, CY, R - 5, CX, CY, R + 15);
+        woodGrad.addColorStop(0, '#8B4513');
+        woodGrad.addColorStop(0.5, '#A0522D');
+        woodGrad.addColorStop(1, '#654321');
+        ctx.beginPath();
+        ctx.arc(CX, CY, R + 12, 0, Math.PI * 2);
+        ctx.fillStyle = woodGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#DAA520';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // 금속 트랙 (볼 트랙)
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(CX, CY, R - 2, 0, Math.PI * 2);
+        const trackGrad = ctx.createRadialGradient(CX, CY, R - 20, CX, CY, R);
+        trackGrad.addColorStop(0, '#555');
+        trackGrad.addColorStop(0.5, '#888');
+        trackGrad.addColorStop(1, '#444');
+        ctx.fillStyle = trackGrad;
+        ctx.fill();
+        ctx.restore();
+
+        // 휠 세그먼트
+        ctx.save();
+        ctx.translate(CX, CY);
+        ctx.rotate(angle);
+
+        for (let i = 0; i < WHEEL_NUMS.length; i++) {
+            const startAngle = (i * SEG - 90 - SEG / 2) * Math.PI / 180;
+            const endAngle = startAngle + SEG * Math.PI / 180;
+
+            // 세그먼트 배경
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.arc(0, 0, IR, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = getColor(WHEEL_NUMS[i]);
+            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // 번호 텍스트
+            ctx.save();
+            const midAngle = startAngle + (SEG / 2) * Math.PI / 180;
+            ctx.rotate(midAngle);
+            ctx.translate(IR - 40, 0);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Orbitron, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(WHEEL_NUMS[i], 0, 0);
+            ctx.restore();
+        }
+
+        // 금속 구분선 (포켓 구분)
+        for (let i = 0; i < WHEEL_NUMS.length; i++) {
+            const a = (i * SEG - 90 - SEG / 2) * Math.PI / 180;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * (CR + 10), Math.sin(a) * (CR + 10));
+            ctx.lineTo(Math.cos(a) * IR, Math.sin(a) * IR);
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // 내부 링
+        ctx.beginPath();
+        ctx.arc(0, 0, CR + 10, 0, Math.PI * 2);
+        const innerRingGrad = ctx.createRadialGradient(0, 0, CR, 0, 0, CR + 12);
+        innerRingGrad.addColorStop(0, '#B8860B');
+        innerRingGrad.addColorStop(0.5, '#FFD700');
+        innerRingGrad.addColorStop(1, '#8B6914');
+        ctx.fillStyle = innerRingGrad;
+        ctx.fill();
+
+        // 중앙 허브
+        ctx.beginPath();
+        ctx.arc(0, 0, CR, 0, Math.PI * 2);
+        const hubGrad = ctx.createRadialGradient(-15, -15, 10, 0, 0, CR);
+        hubGrad.addColorStop(0, '#B8860B');
+        hubGrad.addColorStop(0.3, '#8B6914');
+        hubGrad.addColorStop(0.7, '#654321');
+        hubGrad.addColorStop(1, '#3d2b1f');
+        ctx.fillStyle = hubGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#DAA520';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 중앙 장식
+        ctx.beginPath();
+        ctx.arc(0, 0, 20, 0, Math.PI * 2);
+        const centerGrad = ctx.createRadialGradient(-5, -5, 2, 0, 0, 20);
+        centerGrad.addColorStop(0, '#FFD700');
+        centerGrad.addColorStop(1, '#8B6914');
+        ctx.fillStyle = centerGrad;
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    // ===== 볼 애니메이션 =====
+    let ballAngle = 0;
+    let ballRadius = R - 15;
+    let ballVisible = false;
+    let ballAnimId = null;
+
+    function drawBall() {
+        if (!ballVisible) return;
+        const bx = CX + Math.cos(ballAngle) * ballRadius;
+        const by = CY + Math.sin(ballAngle) * ballRadius;
+
+        ctx.save();
+        const ballGrad = ctx.createRadialGradient(bx - 3, by - 3, 1, bx, by, 8);
+        ballGrad.addColorStop(0, '#ffffff');
+        ballGrad.addColorStop(0.6, '#e0e0e0');
+        ballGrad.addColorStop(1, '#aaaaaa');
+        ctx.beginPath();
+        ctx.arc(bx, by, 8, 0, Math.PI * 2);
+        ctx.fillStyle = ballGrad;
+        ctx.fill();
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // ===== 스핀 애니메이션 =====
+    function spin() {
+        if (spinning) return;
+        if (Object.keys(bets).length === 0) {
+            shakeButton();
+            return;
+        }
+
+        spinning = true;
+        const btn = document.getElementById('spinBtn');
+        btn.disabled = true;
+        btn.classList.add('spinning');
+        btn.textContent = 'SPINNING...';
+
+        lastBets = JSON.parse(JSON.stringify(bets));
+
+        // 결과 결정
+        const resultIdx = Math.floor(Math.random() * WHEEL_NUMS.length);
+        const resultNum = WHEEL_NUMS[resultIdx];
+
+        // 목표 각도 계산
+        const targetSegAngle = resultIdx * SEG;
+        const totalRotation = 360 * 8 + (360 - targetSegAngle); // 8바퀴 + 목표
+
+        // 볼 & 휠 애니메이션
+        ballVisible = true;
+        const startTime = performance.now();
+        const duration = 6000;
+        const startWheelAngle = wheelAngle;
+        const startBallAngle = Math.random() * Math.PI * 2;
+
+        // 사운드 효과 (클릭음 시뮬레이션)
+        let lastClickAngle = 0;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function clickSound() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = 800 + Math.random() * 400;
+            gain.gain.value = 0.03;
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function animate(now) {
+            const elapsed = now - startTime;
+            const t = Math.min(elapsed / duration, 1);
+
+            // easeOutQuint
+            const ease = 1 - Math.pow(1 - t, 5);
+
+            // 휠 회전 (반시계)
+            const wheelDeg = startWheelAngle + totalRotation * ease;
+            wheelAngle = wheelDeg % 360;
+            const wheelRad = (wheelDeg * Math.PI) / 180;
+
+            // 볼 회전 (시계 반대, 속도 감소하며 안쪽으로)
+            const ballSpeed = (1 - ease) * 15 + 0.5;
+            ballAngle = startBallAngle - elapsed * 0.008 * (1 - ease * 0.9);
+
+            // 볼 반지름 (바깥→안쪽)
+            if (t < 0.3) {
+                ballRadius = R - 15;
+            } else if (t < 0.85) {
+                const bt = (t - 0.3) / 0.55;
+                ballRadius = R - 15 - bt * (R - IR - 30);
+                // 약간의 바운스
+                ballRadius += Math.sin(bt * Math.PI * 6) * (1 - bt) * 15;
+            } else {
+                // 최종 포켓에 안착
+                const bt = (t - 0.85) / 0.15;
+                const finalAngle = (-90 + resultIdx * SEG) * Math.PI / 180 + wheelRad;
+                ballAngle = ballAngle + (finalAngle - ballAngle) * bt;
+                ballRadius = IR - 20 - bt * 10 + Math.sin(bt * Math.PI * 3) * (1 - bt) * 8;
+            }
+
+            // 클릭 사운드
+            const currentSegment = Math.floor((ballAngle * 180 / Math.PI) / SEG);
+            if (currentSegment !== lastClickAngle && t < 0.9) {
+                clickSound();
+                lastClickAngle = currentSegment;
+            }
+
+            drawWheel(wheelRad);
+            drawBall();
+
+            if (t < 1) {
+                ballAnimId = requestAnimationFrame(animate);
+            } else {
+                // 스핀 완료
+                const finalWheelRad = (wheelAngle * Math.PI) / 180;
+                drawWheel(finalWheelRad);
+                drawBall();
+
+                setTimeout(() => {
+                    showResult(resultNum);
+                    calculateWinnings(resultNum);
+                    spinning = false;
+                    btn.disabled = false;
+                    btn.classList.remove('spinning');
+                    btn.textContent = 'SPIN';
+                    audioCtx.close();
+                }, 500);
+            }
+        }
+
+        ballAnimId = requestAnimationFrame(animate);
+    }
+
+    function shakeButton() {
+        const btn = document.getElementById('spinBtn');
+        btn.style.animation = 'none';
+        btn.offsetHeight;
+        btn.style.animation = 'shake 0.4s ease';
+        setTimeout(() => btn.style.animation = '', 400);
+    }
+
+    // ===== 결과 & 정산 =====
+    function showResult(num) {
+        const panel = document.getElementById('resultPanel');
+        const cls = num === 0 ? 'g' : RED.has(num) ? 'r' : 'b';
+        const colorName = num === 0 ? 'GREEN' : RED.has(num) ? 'RED' : 'BLACK';
+        panel.innerHTML = `<div class="result-num ${cls}">${num}</div><span class="result-text">${num} ${colorName}</span>`;
+
+        // 히스토리 추가
+        history.unshift({ num, cls });
+        if (history.length > 20) history.pop();
+        localStorage.setItem('roulette_history', JSON.stringify(history));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const bar = document.getElementById('historyBar');
+        bar.innerHTML = history.map(h => `<div class="history-chip ${h.cls}">${h.num}</div>`).join('');
+    }
+
+    function calculateWinnings(result) {
+        let totalWin = 0;
+        const isRed = RED.has(result);
+        const isEven = result !== 0 && result % 2 === 0;
+        const isOdd = result !== 0 && result % 2 === 1;
+
+        for (const bet of Object.values(bets)) {
+            let win = 0;
+            switch (bet.type) {
+                case 'straight':
+                    if (bet.value === result) win = bet.amount * 36;
+                    break;
+                case 'color':
+                    if ((bet.value === 'red' && isRed) || (bet.value === 'black' && !isRed && result !== 0))
+                        win = bet.amount * 2;
+                    break;
+                case 'evenodd':
+                    if ((bet.value === 'even' && isEven) || (bet.value === 'odd' && isOdd))
+                        win = bet.amount * 2;
+                    break;
+                case 'half':
+                    if (bet.value === '1-18' && result >= 1 && result <= 18) win = bet.amount * 2;
+                    else if (bet.value === '19-36' && result >= 19 && result <= 36) win = bet.amount * 2;
+                    break;
+                case 'dozen':
+                    if (bet.value === '1-12' && result >= 1 && result <= 12) win = bet.amount * 3;
+                    else if (bet.value === '13-24' && result >= 13 && result <= 24) win = bet.amount * 3;
+                    else if (bet.value === '25-36' && result >= 25 && result <= 36) win = bet.amount * 3;
+                    break;
+                case 'column':
+                    if (result !== 0) {
+                        const col = result % 3 === 0 ? 3 : result % 3;
+                        if (col === bet.value) win = bet.amount * 3;
+                    }
+                    break;
+            }
+            totalWin += win;
+        }
+
+        balance += totalWin;
+        updateBalance();
+
+        // 오버레이 표시
+        const overlay = document.getElementById('winOverlay');
+        const box = document.getElementById('winBox');
+
+        if (totalWin > 0) {
+            box.className = 'win-box win';
+            box.innerHTML = `<div class="win-amount">+$${totalWin}</div><div class="win-label">Congratulations!</div>`;
+        } else {
+            box.className = 'win-box lose';
+            box.innerHTML = `<div class="lose-text">No Win</div><div class="win-label">Better luck next time</div>`;
+        }
+
+        overlay.classList.add('show');
+        setTimeout(() => overlay.classList.remove('show'), 2500);
+
+        bets = {};
+        updateBetsDisplay();
+    }
+
+    // ===== 베팅 =====
+    function selectChip(val) {
+        selectedChip = val;
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.chip').forEach(c => {
+            if (c.textContent === `$${val}`) c.classList.add('selected');
+        });
+    }
+
+    function placeBet(type, value) {
+        if (spinning) return;
+        if (balance < selectedChip) return;
+
+        const key = `${type}-${value}`;
+        if (!bets[key]) bets[key] = { type, value, amount: 0 };
+        bets[key].amount += selectedChip;
+        balance -= selectedChip;
+
+        updateBalance();
+        updateBetsDisplay();
+        updateTableMarkers();
+    }
+
+    function clearBets() {
+        if (spinning) return;
+        for (const b of Object.values(bets)) balance += b.amount;
+        bets = {};
+        updateBalance();
+        updateBetsDisplay();
+        updateTableMarkers();
+    }
+
+    function rebet() {
+        if (spinning || Object.keys(lastBets).length === 0) return;
+        clearBets();
+        let totalNeeded = 0;
+        for (const b of Object.values(lastBets)) totalNeeded += b.amount;
+        if (balance < totalNeeded) return;
+
+        bets = JSON.parse(JSON.stringify(lastBets));
+        for (const b of Object.values(bets)) balance -= b.amount;
+        updateBalance();
+        updateBetsDisplay();
+        updateTableMarkers();
+    }
+
+    function updateBalance() {
+        document.getElementById('balance').textContent = balance;
+        localStorage.setItem('roulette_balance', balance);
+    }
+
+    function updateBetsDisplay() {
+        const list = document.getElementById('betsList');
+        const totalEl = document.getElementById('totalBet');
+
+        if (Object.keys(bets).length === 0) {
+            list.innerHTML = '<span style="color:rgba(255,255,255,0.3)">No bets placed</span>';
+            totalEl.textContent = '0';
+            return;
+        }
+
+        let html = '', total = 0;
+        for (const [, bet] of Object.entries(bets)) {
+            html += `<div class="bet-row"><span>${getBetLabel(bet.type, bet.value)}</span><span>$${bet.amount}</span></div>`;
+            total += bet.amount;
+        }
+        list.innerHTML = html;
+        totalEl.textContent = total;
+    }
+
+    function getBetLabel(type, value) {
+        const map = {
+            straight: `#${value}`,
+            color: value === 'red' ? 'Red' : 'Black',
+            evenodd: value === 'even' ? 'Even' : 'Odd',
+            half: value,
+            dozen: value === '1-12' ? '1st 12' : value === '13-24' ? '2nd 12' : '3rd 12',
+            column: `Col ${value}`
+        };
+        return map[type] || value;
+    }
+
+    function updateTableMarkers() {
+        document.querySelectorAll('.bet-marker').forEach(m => m.remove());
+
+        for (const [key, bet] of Object.entries(bets)) {
+            const el = document.querySelector(`[data-bet="${key}"]`);
+            if (el) {
+                const marker = document.createElement('div');
+                marker.className = 'bet-marker';
+                marker.textContent = `$${bet.amount}`;
+                el.appendChild(marker);
+            }
+        }
+    }
+
+    // ===== 테이블 생성 =====
+    function createTable() {
+        const grid = document.getElementById('tableGrid');
+
+        // 0 셀
+        const zero = document.createElement('div');
+        zero.className = 'cell grn zero-cell';
+        zero.textContent = '0';
+        zero.dataset.bet = 'straight-0';
+        zero.onclick = () => placeBet('straight', 0);
+        grid.appendChild(zero);
+
+        // 숫자 그리드 3행 x 12열
+        for (let col = 0; col < 12; col++) {
+            for (let row = 2; row >= 0; row--) {
+                const num = col * 3 + row + 1;
+                const cell = document.createElement('div');
+                cell.className = `cell ${RED.has(num) ? 'red' : 'blk'}`;
+                cell.textContent = num;
+                cell.dataset.bet = `straight-${num}`;
+                cell.onclick = () => placeBet('straight', num);
+                grid.appendChild(cell);
+            }
+        }
+    }
+
+    // ===== 배경 파티클 =====
+    function initBgParticles() {
+        const c = document.getElementById('bgCanvas');
+        const cx = c.getContext('2d');
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * c.width,
+                y: Math.random() * c.height,
+                r: Math.random() * 2 + 0.5,
+                dx: (Math.random() - 0.5) * 0.3,
+                dy: (Math.random() - 0.5) * 0.3,
+                a: Math.random() * 0.3 + 0.05
+            });
+        }
+
+        function animateBg() {
+            cx.clearRect(0, 0, c.width, c.height);
+            for (const p of particles) {
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0 || p.x > c.width) p.dx *= -1;
+                if (p.y < 0 || p.y > c.height) p.dy *= -1;
+                cx.beginPath();
+                cx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                cx.fillStyle = `rgba(255, 215, 0, ${p.a})`;
+                cx.fill();
+            }
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        window.addEventListener('resize', () => {
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+        });
+    }
+
+    // ===== 초기화 =====
+    updateBalance();
+    createTable();
+    drawWheel(0);
+    renderHistory();
+    initBgParticles();
+
+    // 버튼 흔들기 애니메이션 추가
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = `@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }`;
+    document.head.appendChild(shakeStyle);
+    </script>
+</body>
+</html>
